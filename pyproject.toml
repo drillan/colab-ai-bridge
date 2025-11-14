@@ -1,0 +1,54 @@
+[project]
+name = "colab-pydantic-ai"
+version = "0.1.0"
+description = "Pydantic AI integration for Google Colab's free Gemini access"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "driller", email = "eleshis@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic-ai>=1.17.0",
+    "openai>=2.8.0",
+    "nest-asyncio>=1.6.0",
+]
+keywords = ["pydantic-ai", "google-colab", "gemini", "ai", "llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/drillan/colab-pydantic-ai"
+Repository = "https://github.com/drillan/colab-pydantic-ai"
+Issues = "https://github.com/drillan/colab-pydantic-ai/issues"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.13.0",
+    "ruff>=0.8.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+# Colab環境専用モジュールのインポートエラーを無視
+[[tool.mypy.overrides]]
+module = [
+    "google.*",
+    "nest_asyncio",
+]
+ignore_missing_imports = true
