@@ -23,7 +23,7 @@ def _auto_setup_colab_environment() -> bool:
     """Import時に自動的にColab環境をセットアップ
 
     以下を実行します：
-    1. google.colab.ai のimport（MODEL_PROXY_API_KEY自動設定）
+    1. google.colab.ai._get_model_proxy_token() の呼び出し（MODEL_PROXY_API_KEY自動設定）
     2. nest_asyncio.apply()（イベントループのネスト許可）
 
     Returns:
@@ -31,8 +31,15 @@ def _auto_setup_colab_environment() -> bool:
         False: Colab環境外（セットアップ不要）
     """
     try:
-        # google.colab.ai をimportしてMODEL_PROXY_API_KEYを設定
+        # google.colab.ai._get_model_proxy_token() を呼び出してMODEL_PROXY_API_KEYを設定
+        # この関数内部で Colab Secrets から取得した値を環境変数に設定する
         from google.colab import ai  # noqa: F401
+
+        try:
+            ai._get_model_proxy_token()  # noqa: SLF001
+        except Exception:  # noqa: S110
+            # エラーは無視（環境変数設定が目的）
+            pass
 
         # nest_asyncioを適用（イベントループのネスト許可）
         try:

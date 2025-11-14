@@ -22,7 +22,7 @@ Google ColabでPydantic AIを簡単に使えるようにする統合パッケー
 Google Colabのセルで次のコマンドを実行します：
 
 ```bash
-!pip install git+https://github.com/drillan/colab-pydantic-ai
+!pip install -q --no-warn-conflicts git+https://github.com/drillan/colab-pydantic-ai
 ```
 
 ## 使い方
