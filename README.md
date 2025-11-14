@@ -1,5 +1,7 @@
 # colab-pydantic-ai
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/drillan/colab-pydantic-ai/blob/main/example.ipynb)
+
 Google ColabでPydantic AIを簡単に使えるようにする統合パッケージです。
 
 ## 概要
