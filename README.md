@@ -22,7 +22,7 @@ Google ColabでPydantic AIを簡単に使えるようにする統合パッケー
 Google Colabのセルで次のコマンドを実行します：
 
 ```bash
-!pip install git+https://github.com/drillan/colab-pydantic-ai
+!pip install -q --no-warn-conflicts git+https://github.com/drillan/colab-pydantic-ai
 ```
 
 ## 使い方
@@ -47,11 +47,9 @@ print(result.output)
 利用可能なモデルを確認：
 
 ```python
-from colab_pydantic_ai import list_available_models
+from google.colab import ai
 
-models = list_available_models()
-for model in models:
-    print(f"{model.name} - {model.description}")
+ai.list_models()
 ```
 
 特定のモデルを使用：
@@ -78,10 +76,10 @@ class City(BaseModel):
     population: int
 
 model = ColabGeminiModel()
-agent = Agent(model, result_type=City)
+agent = Agent(model, output_type=City)
 
 result = agent.run_sync("東京について教えて")
-city = result.data
+city = result.output
 print(f"{city.name}, {city.country}, 人口: {city.population:,}")
 ```
 
