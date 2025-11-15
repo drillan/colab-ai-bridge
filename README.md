@@ -132,68 +132,41 @@ response = model.invoke("フランスの首都は？")
 print(response.content)
 ```
 
-#### 構造化出力
+#### LCEL（チェーン結合）
 
-`with_structured_output()` を使った型安全な出力：
-
-```python
-from colab_ai_bridge.langchain import ColabLangChainModel
-from langchain_core.output_parsers import PydanticOutputParser
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.runnables import RunnableLambda
-from pydantic import BaseModel
-from typing import Type
-
-# 拡張クラスを定義
-class ExtendedColabLangChainModel(ColabLangChainModel):
-    """with_structured_output()を追加した拡張版"""
-
-    def with_structured_output(self, schema: Type[BaseModel], **kwargs):
-        """構造化出力を返すRunnableを作成"""
-        parser = PydanticOutputParser(pydantic_object=schema)
-        format_instructions = parser.get_format_instructions()
-
-        def create_messages(input_data):
-            if isinstance(input_data, dict):
-                query = input_data.get("input", str(input_data))
-            else:
-                query = str(input_data)
-
-            return [
-                SystemMessage(content=f"以下のJSON形式で正確に回答してください:\n{format_instructions}"),
-                HumanMessage(content=f"質問: {query}")
-            ]
-
-        return RunnableLambda(create_messages) | self | parser
-
-# 使い方
-class City(BaseModel):
-    name: str
-    country: str
-    population: int
-
-model = ExtendedColabLangChainModel()
-structured_model = model.with_structured_output(City)
-
-result = structured_model.invoke("東京について教えて")
-print(f"{result.name}, {result.country}, 人口: {result.population:,}")
-```
-
-#### プロンプトテンプレート
+LangChain Expression Language (LCEL) を使った宣言的なチェーン構築。複数の処理を `|` 演算子で簡潔に組み合わせることができます：
 
 ```python
 from colab_ai_bridge.langchain import ColabLangChainModel
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
 model = ColabLangChainModel()
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "あなたは親切なアシスタントです。"),
-    ("human", "{question}"),
-])
 
-chain = prompt | model
-result = chain.invoke({"question": "フランスの首都は？"})
-print(result.content)
+# 複数のチェーンを組み合わせる
+summary_prompt = ChatPromptTemplate.from_template(
+    "以下のテキストを3文で要約してください：\n\n{text}"
+)
+
+translate_prompt = ChatPromptTemplate.from_template(
+    "以下の日本語を英語に翻訳してください：\n\n{text}"
+)
+
+# チェーン1: 要約
+summary_chain = summary_prompt | model | StrOutputParser()
+
+# チェーン2: 要約 → 翻訳
+translate_chain = {"text": summary_chain} | translate_prompt | model | StrOutputParser()
+
+# 実行
+text = """
+LangChainは、言語モデルを使用したアプリケーションを構築するためのフレームワークです。
+プロンプトテンプレート、チェーン、エージェント、メモリなどの機能を提供し、
+複雑なAIアプリケーションを簡単に構築できます。
+"""
+
+result = translate_chain.invoke({"text": text})
+print(result)
 ```
 
 ### DSPy
@@ -255,6 +228,37 @@ dspy.configure(lm=lm)
 cot = dspy.ChainOfThought("question -> answer")
 response = cot(question="日本の四季について説明してください")
 print(response.answer)
+```
+
+#### プロンプト最適化（BootstrapFewShot）
+
+トレーニングデータから自動的にFew-shot examplesを生成し、プロンプトを最適化：
+
+```python
+from colab_ai_bridge.dspy import ColabDSPyLM
+import dspy
+
+# トレーニングデータ（質問と回答のペア）
+trainset = [
+    dspy.Example(question="日本の首都は？", answer="東京").with_inputs("question"),
+    dspy.Example(question="フランスの首都は？", answer="パリ").with_inputs("question"),
+    dspy.Example(question="イギリスの首都は？", answer="ロンドン").with_inputs("question"),
+]
+
+lm = ColabDSPyLM()
+dspy.configure(lm=lm)
+
+# メトリクス：回答が正しいかチェック
+def validate_answer(example, pred, trace=None):
+    return example.answer.lower() in pred.answer.lower()
+
+# BootstrapFewShotで最適化
+optimizer = dspy.BootstrapFewShot(metric=validate_answer, max_bootstrapped_demos=2)
+optimized_predictor = optimizer.compile(dspy.Predict("question -> answer"), trainset=trainset)
+
+# 最適化されたプロンプトでテスト
+result = optimized_predictor(question="ドイツの首都は？")
+print(f"回答: {result.answer}")
 ```
 
 ## 技術詳細
