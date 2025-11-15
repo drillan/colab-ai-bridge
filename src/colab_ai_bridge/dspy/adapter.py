@@ -124,8 +124,7 @@ class ColabDSPyLM(dspy.LM):
         # Return DSPy expected format
         return [
             {
-                "role": "assistant",
-                "content": response.choices[0].message.content or "",
+                "text": response.choices[0].message.content or "",
             }
         ]
 
