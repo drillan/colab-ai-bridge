@@ -1,18 +1,18 @@
-# colab-pydantic-ai
+# colab-ai-bridge
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/drillan/colab-pydantic-ai/blob/main/example.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/drillan/colab-ai-bridge/blob/main/example.ipynb)
 
-Google ColabでPydantic AIを簡単に使えるようにする統合パッケージです。
+Google ColabのAIモデル（Gemini, Gemma）を各種AIフレームワークで簡単に使えるようにするブリッジパッケージです。
 
 ## 概要
 
-このパッケージは、Google ColabのGemini APIアクセスとPydantic AIを統合し、型安全なAIアプリケーション開発をColab環境で可能にします。
+このパッケージは、Google ColabのAIモデルアクセスを主要なAIフレームワーク（Pydantic AI, LangChain, DSPy）と統合し、型安全なAIアプリケーション開発をColab環境で可能にします。
 
 主な特徴：
 
 - セットアップ不要：`import`するだけで自動的にColab環境を設定
-- Pydantic AIのすべての機能が利用可能
-- Google ColabのGemini APIに対応した`ColabGeminiModel`を提供
+- 3大AIフレームワーク対応（Pydantic AI, LangChain, DSPy）
+- Google ColabのGemini/Gemma APIに対応
 
 ## 動作環境
 
@@ -23,8 +23,36 @@ Google ColabでPydantic AIを簡単に使えるようにする統合パッケー
 
 Google Colabのセルで次のコマンドを実行します：
 
+### 基本インストール（コアのみ）
+
 ```bash
-!pip install -q --no-warn-conflicts git+https://github.com/drillan/colab-pydantic-ai
+!pip install -q --no-warn-conflicts git+https://github.com/drillan/colab-ai-bridge
+```
+
+### フレームワークを含むインストール
+
+#### Pydantic AIを使用する場合
+
+```bash
+!pip install -q --no-warn-conflicts "colab-ai-bridge[pydantic-ai] @ git+https://github.com/drillan/colab-ai-bridge"
+```
+
+#### LangChainを使用する場合
+
+```bash
+!pip install -q --no-warn-conflicts "colab-ai-bridge[langchain] @ git+https://github.com/drillan/colab-ai-bridge"
+```
+
+#### DSPyを使用する場合
+
+```bash
+!pip install -q --no-warn-conflicts "colab-ai-bridge[dspy] @ git+https://github.com/drillan/colab-ai-bridge"
+```
+
+#### すべてのフレームワークを含む
+
+```bash
+!pip install -q --no-warn-conflicts "colab-ai-bridge[all] @ git+https://github.com/drillan/colab-ai-bridge"
 ```
 
 ## 使い方
@@ -32,7 +60,7 @@ Google Colabのセルで次のコマンドを実行します：
 ### 基本的な使い方
 
 ```python
-from colab_pydantic_ai import ColabGeminiModel
+from colab_ai_bridge import ColabGeminiModel
 from pydantic_ai import Agent
 
 # モデルの作成（セットアップは自動で完了します）
@@ -57,7 +85,7 @@ ai.list_models()
 特定のモデルを使用：
 
 ```python
-from colab_pydantic_ai import ColabGeminiModel
+from colab_ai_bridge import ColabGeminiModel
 
 # Gemini 2.5 Flash Liteを使用
 model = ColabGeminiModel("google/gemini-2.5-flash-lite")
@@ -68,7 +96,7 @@ model = ColabGeminiModel("google/gemini-2.5-flash-lite")
 Pydantic AIの型安全な機能を活用できます：
 
 ```python
-from colab_pydantic_ai import ColabGeminiModel
+from colab_ai_bridge import ColabGeminiModel
 from pydantic_ai import Agent
 from pydantic import BaseModel
 
@@ -111,5 +139,7 @@ MIT License
 
 ## リンク
 
-- GitHub: https://github.com/drillan/colab-pydantic-ai
-- Pydantic AI: https://ai.pydantic.dev/
+- GitHub: <https://github.com/drillan/colab-ai-bridge>
+- Pydantic AI: <https://ai.pydantic.dev/>
+- LangChain: <https://www.langchain.com/>
+- DSPy: <https://dspy-docs.vercel.app/>

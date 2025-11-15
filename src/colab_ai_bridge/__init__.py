@@ -1,11 +1,11 @@
-"""Pydantic AI integration for Google Colab's Gemini access.
+"""Bridge Google Colab AI models to popular frameworks.
 
-This package provides a seamless integration between Pydantic AI and Google Colab's
-Gemini API access, enabling type-safe AI application development in Colab notebooks.
+This package provides seamless integration between Google Colab's AI models
+(Gemini, Gemma) and popular AI frameworks (Pydantic AI, LangChain, DSPy).
 
 Example:
     ```python
-    from colab_pydantic_ai import ColabGeminiModel
+    from colab_ai_bridge import ColabGeminiModel
     from pydantic_ai import Agent
 
     # No setup required! Everything is automatic in Colab
@@ -61,18 +61,39 @@ _auto_setup_colab_environment()
 
 
 # 公開APIのimport
-from colab_pydantic_ai.model import (  # noqa: E402
+# Pydantic AI統合（後方互換性維持）
+from colab_ai_bridge.pydantic_ai.adapter import (  # noqa: E402
     ColabGeminiModel,
-    ColabGeminiModelProfile,
+    ColabModelProfile as ColabGeminiModelProfile,
     get_colab_gemini_model,
     list_available_models,
 )
 
-__version__ = "0.1.0"
+# バージョン情報を importlib.metadata から動的に取得
+try:
+    from importlib.metadata import version
+
+    __version__ = version("colab-ai-bridge")
+except Exception:
+    __version__ = "unknown"
+
+# コアモジュール
+from colab_ai_bridge.core import (  # noqa: E402, F401
+    ColabModel,
+    ColabSettings,
+    ModelConfig,
+    get_colab_settings,
+)
 
 __all__ = [
+    # Pydantic AI (backward compatibility)
     "ColabGeminiModel",
     "ColabGeminiModelProfile",
     "get_colab_gemini_model",
     "list_available_models",
+    # Core modules
+    "ColabModel",
+    "ModelConfig",
+    "ColabSettings",
+    "get_colab_settings",
 ]

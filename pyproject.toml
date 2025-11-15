@@ -1,7 +1,7 @@
 [project]
-name = "colab-pydantic-ai"
-version = "0.1.0"
-description = "Pydantic AI integration for Google Colab's free Gemini access"
+name = "colab-ai-bridge"
+version = "0.2.0"
+description = "Bridge Google Colab AI models to popular frameworks"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
@@ -9,11 +9,12 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "pydantic-ai>=1.17.0",
     "openai>=2.8.0",
     "nest-asyncio>=1.6.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
 ]
-keywords = ["pydantic-ai", "google-colab", "gemini", "ai", "llm"]
+keywords = ["colab", "ai", "bridge", "gemini", "gemma", "pydantic-ai", "langchain", "dspy"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -25,14 +26,38 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/drillan/colab-pydantic-ai"
-Repository = "https://github.com/drillan/colab-pydantic-ai"
-Issues = "https://github.com/drillan/colab-pydantic-ai/issues"
+Homepage = "https://github.com/drillan/colab-ai-bridge"
+Repository = "https://github.com/drillan/colab-ai-bridge"
+Issues = "https://github.com/drillan/colab-ai-bridge/issues"
+
+[project.optional-dependencies]
+# 個別フレームワーク
+pydantic-ai = [
+    "pydantic-ai>=1.17.0",
+]
+
+langchain = [
+    "langchain>=0.1.0",
+    "langchain-core>=0.1.0",
+]
+
+dspy = [
+    "dspy-ai>=2.0.0",
+]
+
+# 全部入り
+all = [
+    "pydantic-ai>=1.17.0",
+    "langchain>=0.1.0",
+    "langchain-core>=0.1.0",
+    "dspy-ai>=2.0.0",
+]
 
 [dependency-groups]
 dev = [
-    "mypy>=1.13.0",
-    "ruff>=0.8.0",
+    "mypy>=1.18.2",
+    "pytest>=9.0.1",
+    "ruff>=0.14.5",
 ]
 
 [build-system]
@@ -52,3 +77,9 @@ module = [
     "nest_asyncio",
 ]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
