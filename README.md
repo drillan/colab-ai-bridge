@@ -134,30 +134,49 @@ print(response.content)
 
 #### 構造化出力
 
-LangChain の Messages API を使用：
+`with_structured_output()` を使った型安全な出力：
 
 ```python
 from colab_ai_bridge.langchain import ColabLangChainModel
+from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.runnables import RunnableLambda
 from pydantic import BaseModel
-import json
+from typing import Type
 
+# 拡張クラスを定義
+class ExtendedColabLangChainModel(ColabLangChainModel):
+    """with_structured_output()を追加した拡張版"""
+
+    def with_structured_output(self, schema: Type[BaseModel], **kwargs):
+        """構造化出力を返すRunnableを作成"""
+        parser = PydanticOutputParser(pydantic_object=schema)
+        format_instructions = parser.get_format_instructions()
+
+        def create_messages(input_data):
+            if isinstance(input_data, dict):
+                query = input_data.get("input", str(input_data))
+            else:
+                query = str(input_data)
+
+            return [
+                SystemMessage(content=f"以下のJSON形式で正確に回答してください:\n{format_instructions}"),
+                HumanMessage(content=f"質問: {query}")
+            ]
+
+        return RunnableLambda(create_messages) | self | parser
+
+# 使い方
 class City(BaseModel):
     name: str
     country: str
     population: int
 
-model = ColabLangChainModel()
+model = ExtendedColabLangChainModel()
+structured_model = model.with_structured_output(City)
 
-messages = [
-    SystemMessage(content="あなたは構造化されたデータを JSON 形式で返すアシスタントです。"),
-    HumanMessage(content=f"東京について、以下の JSON スキーマに従って情報を返してください：\n{City.model_json_schema()}\n\nJSON のみを返してください。"),
-]
-
-response = model.invoke(messages)
-city_data = json.loads(response.content)
-city = City(**city_data)
-print(f"{city.name}, {city.country}, 人口: {city.population:,}")
+result = structured_model.invoke("東京について教えて")
+print(f"{result.name}, {result.country}, 人口: {result.population:,}")
 ```
 
 #### プロンプトテンプレート
