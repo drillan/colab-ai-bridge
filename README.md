@@ -64,11 +64,11 @@ Google Colabのセルで次のコマンドを実行します：
 #### 基本的な使い方
 
 ```python
-from colab_ai_bridge import ColabGeminiModel
+from colab_ai_bridge.pydantic_ai import ColabPydanticAIModel
 from pydantic_ai import Agent
 
 # モデルの作成（セットアップは自動で完了します）
-model = ColabGeminiModel()
+model = ColabPydanticAIModel()
 agent = Agent(model)
 
 # Agentの実行
@@ -89,10 +89,10 @@ ai.list_models()
 特定のモデルを使用：
 
 ```python
-from colab_ai_bridge import ColabGeminiModel
+from colab_ai_bridge.pydantic_ai import ColabPydanticAIModel
 
 # Gemini 2.5 Flash Liteを使用
-model = ColabGeminiModel("google/gemini-2.5-flash-lite")
+model = ColabPydanticAIModel("google/gemini-2.5-flash-lite")
 ```
 
 #### 構造化出力
@@ -100,7 +100,7 @@ model = ColabGeminiModel("google/gemini-2.5-flash-lite")
 Pydantic AIの型安全な機能を活用できます：
 
 ```python
-from colab_ai_bridge import ColabGeminiModel
+from colab_ai_bridge.pydantic_ai import ColabPydanticAIModel
 from pydantic_ai import Agent
 from pydantic import BaseModel
 
@@ -109,7 +109,7 @@ class City(BaseModel):
     country: str
     population: int
 
-model = ColabGeminiModel()
+model = ColabPydanticAIModel()
 agent = Agent(model, output_type=City)
 
 result = agent.run_sync("東京について教えて")
@@ -249,12 +249,12 @@ print(response.answer)
 
 Colab環境外で使用した場合でも、エラーは発生しません（セットアップがスキップされます）。
 
-### ColabGeminiModel
+### ColabPydanticAIModel
 
-`ColabGeminiModel`は、Pydantic AIの`OpenAIChatModel`を継承し、Google ColabのGemini APIプロキシに対応しています。
+`ColabPydanticAIModel`は、Pydantic AIの`OpenAIChatModel`を継承し、Google ColabのModel Proxyサービス（OpenAI互換API）に対応しています。
 
 - デフォルトモデル: `google/gemini-2.5-flash`
-- 利用可能なモデル: `google/gemini-2.5-flash`, `google/gemini-2.5-flash-lite`
+- 利用可能なモデル: `google/gemini-2.5-flash`, `google/gemini-2.5-flash-lite`, `google/gemma-2-9b`
 - 構造化出力対応（JSON Schema経由）
 - Tool Calling非対応（カスタムツールは使用不可）
 

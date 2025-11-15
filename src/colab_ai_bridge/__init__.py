@@ -5,11 +5,11 @@ This package provides seamless integration between Google Colab's AI models
 
 Example:
     ```python
-    from colab_ai_bridge import ColabGeminiModel
+    from colab_ai_bridge.pydantic_ai import ColabPydanticAIModel
     from pydantic_ai import Agent
 
     # No setup required! Everything is automatic in Colab
-    model = ColabGeminiModel()
+    model = ColabPydanticAIModel()
     agent = Agent(model)
 
     # Run agent (nest_asyncio is automatically applied)
@@ -60,15 +60,6 @@ def _auto_setup_colab_environment() -> bool:
 _auto_setup_colab_environment()
 
 
-# 公開APIのimport
-# Pydantic AI統合（後方互換性維持）
-from colab_ai_bridge.pydantic_ai.adapter import (  # noqa: E402
-    ColabGeminiModel,
-    ColabModelProfile as ColabGeminiModelProfile,
-    get_colab_gemini_model,
-    list_available_models,
-)
-
 # バージョン情報を importlib.metadata から動的に取得
 try:
     from importlib.metadata import version
@@ -86,12 +77,7 @@ from colab_ai_bridge.core import (  # noqa: E402, F401
 )
 
 __all__ = [
-    # Pydantic AI (backward compatibility)
-    "ColabGeminiModel",
-    "ColabGeminiModelProfile",
-    "get_colab_gemini_model",
-    "list_available_models",
-    # Core modules
+    # Core modules only
     "ColabModel",
     "ModelConfig",
     "ColabSettings",

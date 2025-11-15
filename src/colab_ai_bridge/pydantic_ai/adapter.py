@@ -62,7 +62,7 @@ class ColabPydanticAIModel(OpenAIChatModel):
     Examples:
         Basic usage:
         ```python
-        from colab_ai_bridge import ColabPydanticAIModel
+        from colab_ai_bridge.pydantic_ai import ColabPydanticAIModel
         from pydantic_ai import Agent
 
         model = ColabPydanticAIModel()
@@ -154,10 +154,6 @@ class ColabPydanticAIModel(OpenAIChatModel):
         return "colab-ai-bridge"
 
 
-# Backward compatibility alias
-ColabGeminiModel = ColabPydanticAIModel
-
-
 def to_pydantic_ai(
     model: ColabModel,
     *,
@@ -189,28 +185,6 @@ def to_pydantic_ai(
         settings=settings,
         profile=profile,
     )
-
-
-def get_colab_gemini_model(
-    model_name: str = "google/gemini-2.5-flash",
-    **kwargs: Any,
-) -> ColabPydanticAIModel:
-    """Get Google Colab Gemini model (helper function).
-
-    Args:
-        model_name: Gemini model name
-        **kwargs: Additional arguments for ColabPydanticAIModel
-
-    Returns:
-        ColabPydanticAIModel instance
-
-    Example:
-        ```python
-        model = get_colab_gemini_model()
-        agent = Agent(model)
-        ```
-    """
-    return ColabPydanticAIModel(model_name, **kwargs)
 
 
 def list_available_models() -> list[str]:

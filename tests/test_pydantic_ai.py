@@ -5,10 +5,8 @@ from unittest.mock import patch
 
 
 from colab_ai_bridge.pydantic_ai.adapter import (
-    ColabGeminiModel,
     ColabModelProfile,
     ColabPydanticAIModel,
-    get_colab_gemini_model,
     to_pydantic_ai,
 )
 from colab_ai_bridge.core.model import ColabModel
@@ -55,20 +53,6 @@ class TestColabPydanticAIModel:
             model = ColabPydanticAIModel(config=config)
             assert model.system == "colab-ai-bridge"
 
-    def test_backward_compatibility_alias(self) -> None:
-        """Test ColabGeminiModel alias for backward compatibility."""
-        with patch.dict(
-            os.environ,
-            {
-                "MODEL_PROXY_HOST": "https://model-proxy.example.com",
-                "MODEL_PROXY_API_KEY": "test-api-key",
-            },
-        ):
-            # ColabGeminiModel should be an alias
-            model = ColabGeminiModel()
-            assert isinstance(model, ColabPydanticAIModel)
-            assert model.system == "colab-ai-bridge"
-
 
 class TestHelperFunctions:
     """Tests for helper functions."""
@@ -86,16 +70,3 @@ class TestHelperFunctions:
             pydantic_model = to_pydantic_ai(base_model)
             assert isinstance(pydantic_model, ColabPydanticAIModel)
             assert pydantic_model.system == "colab-ai-bridge"
-
-    def test_get_colab_gemini_model(self) -> None:
-        """Test get_colab_gemini_model helper function."""
-        with patch.dict(
-            os.environ,
-            {
-                "MODEL_PROXY_HOST": "https://model-proxy.example.com",
-                "MODEL_PROXY_API_KEY": "test-api-key",
-            },
-        ):
-            model = get_colab_gemini_model()
-            assert isinstance(model, ColabPydanticAIModel)
-            assert model.system == "colab-ai-bridge"
