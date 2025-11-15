@@ -116,8 +116,8 @@ class ColabDSPyLM(dspy.LM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,  # type: ignore[arg-type]
-            temperature=self.temperature,
-            max_tokens=self.max_tokens,
+            temperature=self.colab_model.config.temperature,
+            max_tokens=self.colab_model.config.max_tokens,
             **kwargs,
         )
 
