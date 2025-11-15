@@ -3,7 +3,12 @@
 from typing import Any, Iterator, Optional
 
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage
+from langchain_core.messages import (
+    AIMessage,
+    AIMessageChunk,
+    BaseMessage,
+    convert_to_openai_messages,
+)
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
 from openai import OpenAI
 
@@ -106,9 +111,7 @@ class ColabLangChainModel(BaseChatModel):
         )
 
         # Convert LangChain messages to OpenAI format
-        openai_messages = [
-            {"role": msg.type, "content": msg.content} for msg in messages
-        ]
+        openai_messages = convert_to_openai_messages(messages)
 
         # API call
         response = client.chat.completions.create(
@@ -150,9 +153,7 @@ class ColabLangChainModel(BaseChatModel):
         )
 
         # Convert LangChain messages to OpenAI format
-        openai_messages = [
-            {"role": msg.type, "content": msg.content} for msg in messages
-        ]
+        openai_messages = convert_to_openai_messages(messages)
 
         # Stream API call
         stream = client.chat.completions.create(
